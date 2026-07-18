@@ -5,7 +5,7 @@ This folder contains my notes and exercises about Git and GitHub.
 ## Contents
 
 - 00 - Why Git?
-- 01 - Git Basics (coming soon)
+- 01 - Git Basics
 - 02 - GitHub
 - 03 - Branches
 - 04 - Merge
