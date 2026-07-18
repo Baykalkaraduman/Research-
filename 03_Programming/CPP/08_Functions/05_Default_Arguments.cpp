@@ -1,56 +1,182 @@
 #include <iostream>
-#include <iomanip> // Included for stream manipulators like setprecision()
+#include <iomanip>
 #include <string>
 
 using namespace std;
 
-// FUNCTION PROTOTYPES WITH DEFAULT ARGUMENTS
-// We declare the default arguments here in the prototype. If the caller does not 
-// provide a value for these parameters, the compiler automatically uses these defaults.
-// RULE: Once a default argument is provided, all subsequent parameters in the list 
-// must also have default arguments.
-double calc_cost(double base_cost = 110, double tax_rate = 0.06, double shipping = 3.50); 
-void greeting(string name, string prefix = "Mr.", string suffix = "");
+//======================================================
+//              Function Prototypes
+//======================================================
 
-// FUNCTION DEFINITIONS
-// Notice that we DO NOT repeat the default values in the definition.
-double calc_cost (double base_cost, double tax_rate, double shipping) {
-    // Calculates total cost. 'base_cost += ...' updates base_cost and returns it.
-    return base_cost += (base_cost * tax_rate) + shipping;
+// Default arguments are specified only ONCE,
+// usually in the function prototype.
+
+double calculate_cost(double base_cost = 110.0,
+                      double tax_rate = 0.06,
+                      double shipping_cost = 3.50);
+
+void greet(string name,
+           string prefix = "Mr.",
+           string suffix = "");
+
+//======================================================
+//              Function Definitions
+//======================================================
+
+double calculate_cost(double base_cost,
+                      double tax_rate,
+                      double shipping_cost)
+{
+    return base_cost + (base_cost * tax_rate) + shipping_cost;
 }
 
-void greeting(string name, string prefix, string suffix) {
-    // Concatenates the strings and prints them.
-    cout << "Hello " << prefix + " " << name + " " << suffix << endl; 
+void greet(string name,
+           string prefix,
+           string suffix)
+{
+    cout << "Hello "
+         << prefix << " "
+         << name;
+
+    if (!suffix.empty())
+        cout << ", " << suffix;
+
+    cout << "!" << endl;
 }
 
-int main() {
-    double cost {0}; // Best practice: initialize variables at declaration
+//======================================================
+//                      Main
+//======================================================
 
-    // 1. Passing all arguments: No default arguments are used.
-    cost = calc_cost(120.0, 0.08, 4.25); 
-
-    // Formatting the output to always show 2 decimal places (e.g., 120.00)
+int main()
+{
     cout << fixed << setprecision(2);
-    cout << "Cost is " << cost << endl;
 
-    // 2. Missing one argument: 'shipping' uses the default value (3.50).
-    cost = calc_cost(100.0, 0.08); 
-    cout << "Cost is " << cost << endl;
+    cout << "================ Example 1 ================" << endl;
 
-    // 3. Missing two arguments: 'tax_rate' (0.06) and 'shipping' (3.50) use defaults.
-    cost = calc_cost(200.0); 
-    cout << "Cost is " << cost << endl;
+    double cost {};
 
-    // 4. Missing all arguments: Uses all defaults (110, 0.06, 3.50).
-    cost = calc_cost(); 
-    cout << "Cost is " << cost << endl;
+    cost = calculate_cost(120.0, 0.08, 4.25);
+    cout << "Cost = $" << cost << endl;
 
-    // Testing the greeting function with various combinations of default arguments
-    greeting("Emir Karaduman", "Professor", "Ph.D"); // No defaults used
-    greeting("Ilayda Karaduman", "Doctor");          // 'suffix' uses default ("")
-    greeting("Yalcin Karaduman");                    // 'prefix' ("Mr.") and 'suffix' ("") use defaults
-    greeting("Esra Karaduman", "Mrs.");              // 'prefix' is overwritten, 'suffix' uses default
+    //--------------------------------------------------
+
+    cout << "\n================ Example 2 ================" << endl;
+
+    cost = calculate_cost(100.0, 0.08);
+
+    cout << "Shipping uses the default value." << endl;
+    cout << "Cost = $" << cost << endl;
+
+    //--------------------------------------------------
+
+    cout << "\n================ Example 3 ================" << endl;
+
+    cost = calculate_cost(200.0);
+
+    cout << "Tax rate and shipping use default values." << endl;
+    cout << "Cost = $" << cost << endl;
+
+    //--------------------------------------------------
+
+    cout << "\n================ Example 4 ================" << endl;
+
+    cost = calculate_cost();
+
+    cout << "All parameters use default values." << endl;
+    cout << "Cost = $" << cost << endl;
+
+    //--------------------------------------------------
+
+    cout << "\n================ Example 5 ================" << endl;
+
+    greet("Emir Karaduman",
+          "Professor",
+          "Ph.D");
+
+    greet("Ilayda Karaduman",
+          "Doctor");
+
+    greet("Yalcin Karaduman");
+
+    greet("Esra Karaduman",
+          "Mrs.");
+
+    //--------------------------------------------------
+
+    cout << "\n================ Example 6 ================" << endl;
+
+    cout << "Default arguments are filled from RIGHT to LEFT."
+         << endl;
+
+    cout << "Valid calls:" << endl;
+
+    calculate_cost();
+    calculate_cost(150);
+    calculate_cost(150, 0.08);
+    calculate_cost(150, 0.08, 5);
+
+    //--------------------------------------------------
+
+    cout << "\n================ Example 7 ================" << endl;
+
+    cout << "Invalid declaration example:" << endl;
+
+    /*
+        INVALID
+
+        void example(int a = 5,
+                     int b,
+                     int c = 10);
+
+        Once a parameter has a default value,
+        every parameter to its RIGHT must also
+        have a default value.
+    */
+
+    //--------------------------------------------------
+
+    cout << "\n================ Example 8 ================" << endl;
+
+    cout << "Default arguments are substituted by the compiler."
+         << endl;
+
+    cout << "Calling\n\n";
+
+    cout << "    calculate_cost(200);\n\n";
+
+    cout << "is treated approximately as\n\n";
+
+    cout << "    calculate_cost(200, 0.06, 3.50);\n";
+
+    //--------------------------------------------------
+
+    cout << "\n================ Example 9 ================" << endl;
+
+    cout << "Default arguments should be declared only once,"
+         << endl;
+
+    cout << "normally in the function prototype."
+         << endl;
+
+    /*
+        Correct
+
+        double calculate_cost(double base = 110,
+                              double tax = 0.06,
+                              double shipping = 3.5);
+
+        double calculate_cost(double base,
+                              double tax,
+                              double shipping)
+        {
+            ...
+        }
+    */
+
+    //--------------------------------------------------
+
+    cout << "\nProgram Finished!" << endl;
 
     return 0;
 }
