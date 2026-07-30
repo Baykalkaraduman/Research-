@@ -22,6 +22,8 @@ source.charge, source.momentum, source.detector_layer, source.alive} {
 
 }
 
+Particle::Particle (Particle &&source) {}
+
 Particle::~Particle()
 {
     --num_particle;
