@@ -27,7 +27,7 @@ using namespace std;
 // Function Prototypes
 //==============================================================
 
-void print_title(const string& title);
+void print_title(const string &title);
 
 void double_data(int *int_ptr);
 
@@ -41,7 +41,7 @@ void display_array(const int *array, int sentinel);
 // Helper Function
 //==============================================================
 
-void print_title(const string& title) {
+void print_title(const string &title) {
 
     cout << "\n=====================================================\n";
     cout << title << endl;

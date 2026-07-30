@@ -55,7 +55,7 @@ int main() {
         int_ptr  ----------->     150
     */
 
-    delete int_ptr;
+    delete int_ptr;     // We must give back the storage we took from the heap otherwise it will cause a memory leak.
     int_ptr = nullptr;
 
     cout << "\nMemory released successfully.\n";
@@ -64,9 +64,9 @@ int main() {
 
     cout << "\n================ Example 2 : Dynamic Double =================\n\n";
 
-    double* temperature_ptr {new double};
+    double* temperature_ptr {new double};       // Right now it is just an adress on the heap.
 
-    *temperature_ptr = 36.8;
+    *temperature_ptr = 36.8;                    // Adress on the heap now holds this value.
 
     cout << "Temperature : " << *temperature_ptr << endl;
 
@@ -82,7 +82,7 @@ int main() {
     cout << "How many temperatures do you want to store? ";
     cin >> size;
 
-    double* temperatures {new double[size]};
+    double* temperatures {new double[size]};        // Allocating memory on the heap with given size. 
 
     cout << "\nEnter " << size << " temperatures\n\n";
 

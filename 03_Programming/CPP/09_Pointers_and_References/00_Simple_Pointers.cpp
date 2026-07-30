@@ -29,7 +29,7 @@ int main() {
     int num {10};
 
     cout << "Value of num        : " << num << endl;
-    cout << "Address of num      : " << &num << endl;
+    cout << "Address of num      : " << &num << endl; // & operator shows the location of the variable
     cout << "Size of num         : " << sizeof(num) << " bytes\n";
 
     // ---------------------------------------------------------
@@ -44,9 +44,9 @@ int main() {
         Accessing (*pointer) would cause Undefined Behavior.
     */
 
-    int* p {};
+    int* p {}; // This is how we are generating pointers
 
-    cout << "Value stored in p   : " << p << endl;
+    cout << "Value stored in p   : " << p << endl; // compiler makes it nullptr but in vanilla cpp it would be garbage.
     cout << "Address of p itself : " << &p << endl;
     cout << "Size of p           : " << sizeof(p) << " bytes\n";
 
@@ -108,7 +108,7 @@ int main() {
 
     cout << "score_ptr stores      : " << score_ptr << endl;
     cout << "Address of score_ptr  : " << &score_ptr << endl;
-
+    cout << "value of score_ptr    : " << *score_ptr << endl; 
     /*
         score_ptr stores
 
