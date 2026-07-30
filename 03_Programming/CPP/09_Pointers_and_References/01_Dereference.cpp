@@ -53,7 +53,7 @@ int main() {
     cout << "Original score          : " << score << endl;
     cout << "Pointer reads           : " << *score_ptr << endl;
 
-    *score_ptr = 250;
+    *score_ptr = 250; // Basicly assigning the new value at a spesific location, overriding.
 
     cout << "\nAfter modification through pointer\n";
 
@@ -61,7 +61,7 @@ int main() {
     cout << "Variable value          : " << score << endl;
 
     /*
-        score
+        score:
 
         +-----------+
         |   250     |
@@ -82,7 +82,7 @@ int main() {
 
     cout << "Current temperature : " << *temp_ptr << endl;
 
-    temp_ptr = &low_temp;
+    temp_ptr = &low_temp;   // Assigning a new location to the pointer. Doesn't change the original variable just changes where the pointer points.
 
     cout << "Pointer redirected to low_temp\n";
 
@@ -102,7 +102,7 @@ int main() {
 
     cout << "Original name : " << *scientist_ptr << endl;
 
-    scientist = "Marie Curie";
+    scientist = "Paul Diraac";
 
     cout << "After modifying the string\n";
 
