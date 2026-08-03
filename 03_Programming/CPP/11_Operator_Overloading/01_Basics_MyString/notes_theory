@@ -1,0 +1,624 @@
+# C++ Notes
+# MyString Class — Constructors, Copy Constructor & Rule of Three
+
+> [!abstract]
+> **Goal**
+>
+> This project is **not** intended to replace `std::string`.
+>
+> Its purpose is to understand how C++ manages memory internally by implementing a simplified string class from scratch.
+
+---
+
+# Why create our own String class?
+
+Normally we would simply write
+
+```cpp
+std::string name{"Physics"};
+```
+
+and everything would work automatically.
+
+However, `std::string` hides many important concepts from us.
+
+By creating our own class we learn:
+
+- Classes & Objects
+- Constructors
+- Destructor
+- Dynamic Memory Allocation
+- Heap Memory
+- Deep Copy
+- Shallow Copy
+- Memory Ownership
+- RAII
+- Rule of Three
+
+---
+
+# Class Layout
+
+```text
+MyString
+│
+├── char *str
+│
+├── Constructors
+├── Destructor
+├── display()
+├── get_length()
+└── get_str()
+```
+
+Every object owns exactly **one dynamically allocated C-style string**.
+
+---
+
+# Memory Ownership
+
+Our object owns its memory.
+
+```text
+MyString object
+
+      str
+       │
+       ▼
+
++---+---+---+---+---+----+
+| L | a | r | r | y | \0 |
++---+---+---+---+---+----+
+```
+
+Since **our class allocated this memory**, our class is also responsible for deleting it.
+
+> [!important]
+> **Golden Rule**
+>
+> Whoever allocates memory must eventually release it.
+
+---
+
+# Constructors
+
+Constructors initialize newly created objects.
+
+Whenever an object is created, the compiler automatically calls one constructor.
+
+Example
+
+```cpp
+MyString first;
+```
+
+Compiler automatically executes
+
+```cpp
+MyString::MyString();
+```
+
+---
+
+# No-Args Constructor
+
+## Purpose
+
+Creates an empty string.
+
+Instead of storing
+
+```cpp
+str = nullptr;
+```
+
+we allocate
+
+```cpp
+new char[1];
+```
+
+and store
+
+```cpp
+'\0'
+```
+
+Memory
+
+```text
+str
+
+ ▼
+
++----+
+| \0 |
++----+
+```
+
+### Why?
+
+Functions like
+
+```cpp
+strlen(str);
+```
+
+expect a valid C-string.
+
+Calling
+
+```cpp
+strlen(nullptr);
+```
+
+results in **Undefined Behavior**.
+
+Therefore every object should always remain in a valid state.
+
+---
+
+# Overloaded Constructor
+
+Example
+
+```cpp
+MyString name{"Larry"};
+```
+
+### Step 1
+
+Determine the string length.
+
+```cpp
+strlen(s);
+```
+
+returns
+
+```
+Larry
+
+↓
+
+5
+```
+
+---
+
+### Step 2
+
+Allocate memory.
+
+```cpp
+new char[strlen(s)+1];
+```
+
+The extra `+1` stores the null terminator (`'\0'`).
+
+---
+
+### Step 3
+
+Copy every character.
+
+```cpp
+strcpy(str,s);
+```
+
+Memory becomes
+
+```text
+source
+
+Larry
+
+↓
+
+this
+
+Larry
+```
+
+Different memory
+
+Same contents
+
+---
+
+# Copy Constructor
+
+Example
+
+```cpp
+MyString first{"Physics"};
+
+MyString second{first};
+```
+
+Compiler automatically calls
+
+```cpp
+MyString(const MyString &source);
+```
+
+---
+
+# Why can't we simply copy the pointer?
+
+Suppose we write
+
+```cpp
+str = source.str;
+```
+
+Memory
+
+```text
+source.str
+      │
+      ▼
+ Physics
+
+this->str
+      │
+      └───────────────┘
+```
+
+Now both objects point to exactly the same memory.
+
+When one object dies
+
+```cpp
+delete[] str;
+```
+
+the memory disappears.
+
+The second object still points to deleted memory.
+
+Later its destructor executes
+
+```cpp
+delete[] str;
+```
+
+again.
+
+Result
+
+- Double Delete
+- Dangling Pointer
+- Undefined Behavior
+
+This is called
+
+> **Shallow Copy**
+
+---
+
+# Deep Copy
+
+Instead we allocate completely new memory.
+
+```cpp
+str = new char[strlen(source.str)+1];
+
+strcpy(str,source.str);
+```
+
+Memory
+
+```text
+Object A
+
+Physics
+
+Object B
+
+Physics
+```
+
+Different addresses
+
+Same contents
+
+Each object owns its own memory.
+
+---
+
+# Destructor
+
+Purpose
+
+Release dynamically allocated memory.
+
+```cpp
+delete[] str;
+```
+
+Whenever an object leaves its scope
+
+the compiler automatically executes
+
+```cpp
+~MyString();
+```
+
+Example
+
+```cpp
+{
+    MyString s{"Physics"};
+
+}
+```
+
+At the closing brace
+
+```cpp
+s.~MyString();
+```
+
+is called automatically.
+
+---
+
+# Getter Functions
+
+Getter functions provide read-only access to private data.
+
+Example
+
+```cpp
+int get_length() const;
+```
+
+The keyword
+
+```cpp
+const
+```
+
+means
+
+> "This function promises not to modify the object."
+
+---
+
+# Why return const char* ?
+
+Instead of
+
+```cpp
+char*
+```
+
+we return
+
+```cpp
+const char*
+```
+
+This prevents outside code from writing
+
+```cpp
+myString.get_str()[0]='X';
+```
+
+which would directly modify the object's internal memory.
+
+This is called **Encapsulation**.
+
+---
+
+# Rule of Three
+
+Whenever a class manages dynamic memory it usually needs
+
+1. Destructor
+2. Copy Constructor
+3. Copy Assignment Operator
+
+These three functions work together.
+
+If you implement one,
+
+you will almost always need the other two.
+
+---
+
+# Memory Diagram
+
+```text
+MyString
+
+        str
+         │
+         ▼
+
++---+---+---+---+----+
+| T | e | s | t | \0 |
++---+---+---+---+----+
+```
+
+After Copy Constructor
+
+```text
+Original
+
+Test
+
+Copy
+
+Test
+```
+
+Same contents
+
+Different memory
+
+---
+
+# Common Beginner Mistakes
+
+❌ Leaving
+
+```cpp
+str = nullptr;
+```
+
+instead of allocating an empty string.
+
+---
+
+❌ Forgetting
+
+```cpp
++1
+```
+
+when allocating memory.
+
+---
+
+❌ Using
+
+```cpp
+delete
+```
+
+instead of
+
+```cpp
+delete[]
+```
+
+---
+
+❌ Shallow Copy
+
+```cpp
+str = source.str;
+```
+
+---
+
+❌ Forgetting to implement a destructor.
+
+---
+
+# Best Practices
+
+- Always keep every object in a valid state.
+- Every allocation must have exactly one matching delete.
+- Prefer Deep Copy over Shallow Copy.
+- Getter functions should usually be `const`.
+- Return `const` pointers whenever possible.
+- Understand memory ownership before writing classes.
+
+---
+
+# Concepts Learned
+
+After completing this project you should understand
+
+- Classes
+- Objects
+- Constructors
+- Destructor
+- Heap Allocation
+- Dynamic Memory
+- Deep Copy
+- Shallow Copy
+- Memory Ownership
+- Encapsulation
+- RAII
+- Rule of Three
+
+---
+
+# Next Topics
+
+```
+Copy Assignment Operator
+        ↓
+Move Constructor
+        ↓
+Move Assignment
+        ↓
+Operator Overloading
+```
+
+After those implementations our class will begin behaving much more like `std::string`.
+
+---
+
+# Self-Test
+
+1. Why do we allocate `strlen(s)+1` bytes?
+2. What is the difference between Deep Copy and Shallow Copy?
+3. Why does an empty string still allocate one character?
+4. Why should getter functions be `const`?
+5. Why is `delete[]` required instead of `delete`?
+6. When is the Copy Constructor automatically called?
+7. Why do we need a Destructor?
+8. What is the Rule of Three?
+
+---
+
+# Exercises
+
+## Exercise 1
+
+Draw the memory layout of
+
+```cpp
+MyString first{"Physics"};
+
+MyString second{first};
+```
+
+Show both objects and their memory.
+
+---
+
+## Exercise 2
+
+Explain why
+
+```cpp
+str = source.str;
+```
+
+is dangerous.
+
+---
+
+## Exercise 3
+
+Modify `display()` so that it also prints the memory address stored inside `str`.
+
+---
+
+## Exercise 4
+
+Predict the constructor/destructor order.
+
+```cpp
+{
+    MyString a{"A"};
+    MyString b{a};
+}
+```
+
+Write every constructor and destructor call in order.
+
+---
+
+> [!success]
+> **Summary**
+>
+> This project builds the foundation for Modern C++.
+>
+> Understanding these concepts makes Copy Assignment, Move Semantics, Smart Pointers, Inheritance, Polymorphism and STL much easier to learn later.
