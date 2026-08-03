@@ -49,6 +49,9 @@ int main () {
 
     display_particle(proton);
 
+    positron.display();
+    display_particle(positron);
+
 
 
     return 0;
