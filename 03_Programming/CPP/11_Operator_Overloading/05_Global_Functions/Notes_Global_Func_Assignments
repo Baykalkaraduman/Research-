@@ -1,0 +1,670 @@
+# Global / Non-Member Operator Overloading in C++
+
+> [!abstract] Topic
+> **Operator Overloading as Non-Member (Global) Functions**
+>
+> In this approach, overloaded operators are defined **outside the class** rather than as member functions.
+>
+> Example:
+>
+> ```cpp
+> bool operator==(const Mystring &lhs, const Mystring &rhs);
+> Mystring operator-(const Mystring &obj);
+> Mystring operator+(const Mystring &lhs, const Mystring &rhs);
+> ```
+
+---
+
+## 1. Member vs Global Operator Overloading
+
+### Member function
+
+When an operator is a member function:
+
+```cpp
+class Mystring {
+public:
+    Mystring operator+(const Mystring &rhs) const;
+};
+```
+
+It is called through the left-hand object:
+
+```cpp
+first + second;
+```
+
+Conceptually:
+
+```cpp
+first.operator+(second);
+```
+
+The left-hand operand is automatically `*this`.
+
+---
+
+### Global / Non-Member function
+
+When the operator is a global function:
+
+```cpp
+Mystring operator+(const Mystring &lhs,
+                   const Mystring &rhs);
+```
+
+Both operands must be explicitly provided:
+
+```cpp
+first + second;
+```
+
+Conceptually:
+
+```cpp
+operator+(first, second);
+```
+
+There is no `this` pointer because the function does not belong to the class.
+
+---
+
+# 2. Why Use Global Operators?
+
+One important advantage is that the operator can work naturally when the **left-hand operand is not a `Mystring` object**.
+
+For example:
+
+```cpp
+Mystring moe{"Moe"};
+
+Mystring result = "Larry" + moe;
+```
+
+This is difficult with a member function because the left-hand side is:
+
+```cpp
+"Larry"
+```
+
+which is a C-style string, not a `Mystring` object.
+
+A global operator can receive both operands:
+
+```cpp
+operator+("Larry", moe);
+```
+
+and the `Mystring` constructor can convert `"Larry"` into a temporary `Mystring`.
+
+Therefore:
+
+```cpp
+"Larry" + moe;
+```
+
+can work.
+
+---
+
+# 3. `friend` Functions
+
+The `str` member is private:
+
+```cpp
+class Mystring {
+private:
+    char *str;
+};
+```
+
+A global function normally **cannot access private members**.
+
+For example:
+
+```cpp
+bool operator==(const Mystring &lhs,
+                const Mystring &rhs)
+{
+    return std::strcmp(lhs.str, rhs.str) == 0;
+}
+```
+
+would normally be illegal because:
+
+```cpp
+lhs.str
+rhs.str
+```
+
+are private.
+
+We solve this by declaring the global function as a `friend`:
+
+```cpp
+class Mystring {
+
+    friend bool operator==(const Mystring &lhs,
+                            const Mystring &rhs);
+
+private:
+    char *str;
+};
+```
+
+Now the global function is allowed to access private members.
+
+> [!important]
+> `friend` does **not** make the function a member function.
+>
+> It remains a global/non-member function.
+>
+> `friend` simply gives it permission to access the class's private and protected members.
+
+---
+
+# 4. Equality Operator
+
+Global declaration:
+
+```cpp
+friend bool operator==(const Mystring &lhs,
+                       const Mystring &rhs);
+```
+
+Definition:
+
+```cpp
+bool operator==(const Mystring &lhs,
+                const Mystring &rhs)
+{
+    return std::strcmp(lhs.str, rhs.str) == 0;
+}
+```
+
+Usage:
+
+```cpp
+Mystring larry{"Larry"};
+Mystring moe{"Moe"};
+
+if (larry == moe)
+    ...
+```
+
+Conceptually:
+
+```cpp
+operator==(larry, moe);
+```
+
+Both operands are explicitly passed to the global function.
+
+---
+
+# 5. Unary Operator as Global Function
+
+The unary minus operator can also be global:
+
+```cpp
+friend Mystring operator-(const Mystring &obj);
+```
+
+Definition:
+
+```cpp
+Mystring operator-(const Mystring &obj)
+{
+    // ...
+}
+```
+
+Usage:
+
+```cpp
+Mystring larry{"Larry"};
+
+larry = -larry;
+```
+
+Conceptually:
+
+```cpp
+operator-(larry);
+```
+
+There is only one operand because `-` is unary in this context.
+
+---
+
+# 6. Global Concatenation Operator
+
+The `+` operator receives two operands:
+
+```cpp
+friend Mystring operator+(const Mystring &lhs,
+                          const Mystring &rhs);
+```
+
+Definition:
+
+```cpp
+Mystring operator+(const Mystring &lhs,
+                   const Mystring &rhs)
+{
+    // create concatenated string
+    // return new Mystring
+}
+```
+
+Usage:
+
+```cpp
+Mystring moe{"Moe"};
+Mystring larry{"Larry"};
+
+Mystring result = moe + larry;
+```
+
+Conceptually:
+
+```cpp
+operator+(moe, larry);
+```
+
+---
+
+# 7. Why Global `+` Is Especially Useful
+
+The important example:
+
+```cpp
+Mystring stooges = "Larry" + moe;
+```
+
+The left-hand side is a C-style string:
+
+```cpp
+"Larry"
+```
+
+The right-hand side is:
+
+```cpp
+moe
+```
+
+A global operator can accept both operands and allow the `Mystring` constructor to perform the conversion.
+
+This makes expressions such as:
+
+```cpp
+Mystring two_stooges = moe + " " + "Larry";
+```
+
+possible.
+
+And even:
+
+```cpp
+Mystring three_stooges =
+    moe + " " + larry + " " + "Curly";
+```
+
+can work through repeated operator calls and temporary `Mystring` objects.
+
+---
+
+# 8. Operator Chaining
+
+Consider:
+
+```cpp
+Mystring two_stooges = moe + " " + "Larry";
+```
+
+The operations happen sequentially.
+
+Conceptually:
+
+```cpp
+(moe + " ") + "Larry"
+```
+
+First:
+
+```cpp
+moe + " "
+```
+
+produces a temporary `Mystring`.
+
+Then:
+
+```cpp
+temporary + "Larry"
+```
+
+produces the final result.
+
+This is one reason returning a `Mystring` object from `operator+` is important.
+
+---
+
+# 9. Basic Structure
+
+A global operator typically has three parts.
+
+### 1. Friend declaration inside the class
+
+```cpp
+class Mystring {
+
+friend Mystring operator+(const Mystring &lhs,
+                           const Mystring &rhs);
+
+private:
+    char *str;
+};
+```
+
+### 2. Global definition outside the class
+
+```cpp
+Mystring operator+(const Mystring &lhs,
+                   const Mystring &rhs)
+{
+    // implementation
+}
+```
+
+### 3. Normal operator syntax
+
+```cpp
+Mystring result = first + second;
+```
+
+The user does not need to call:
+
+```cpp
+operator+(first, second);
+```
+
+although that is essentially what happens conceptually.
+
+---
+
+# 10. `lhs` and `rhs`
+
+These names are conventions.
+
+```cpp
+lhs
+```
+
+means:
+
+> **left-hand side**
+
+```cpp
+rhs
+```
+
+means:
+
+> **right-hand side**
+
+For:
+
+```cpp
+first + second
+```
+
+we have:
+
+```text
+lhs = first
+rhs = second
+```
+
+For:
+
+```cpp
+larry == moe
+```
+
+we have:
+
+```text
+lhs = larry
+rhs = moe
+```
+
+---
+
+# 11. Global Operators in This Project
+
+The `Mystring` class currently demonstrates:
+
+```cpp
+friend bool operator==(const Mystring &lhs,
+                       const Mystring &rhs);
+
+friend Mystring operator-(const Mystring &obj);
+
+friend Mystring operator+(const Mystring &lhs,
+                          const Mystring &rhs);
+```
+
+These correspond to:
+
+| Operator  | Purpose                         | Operands |
+| --------- | ------------------------------- | -------: |
+| `==`      | Compare string contents         |        2 |
+| unary `-` | Convert characters to lowercase |        1 |
+| `+`       | Concatenate strings             |        2 |
+
+---
+
+# 12. Important Difference
+
+### Member operator
+
+```cpp
+class Mystring {
+public:
+    Mystring operator+(const Mystring &rhs) const;
+};
+```
+
+Conceptually:
+
+```cpp
+first.operator+(second);
+```
+
+The left operand is the object:
+
+```cpp
+first
+```
+
+---
+
+### Global operator
+
+```cpp
+Mystring operator+(const Mystring &lhs,
+                   const Mystring &rhs);
+```
+
+Conceptually:
+
+```cpp
+operator+(first, second);
+```
+
+Both operands are parameters.
+
+---
+
+# 13. Why `friend` Is Useful Here
+
+Without `friend`:
+
+```cpp
+bool operator==(const Mystring &lhs,
+                const Mystring &rhs)
+{
+    return std::strcmp(lhs.str, rhs.str) == 0;
+}
+```
+
+the function cannot access:
+
+```cpp
+lhs.str
+rhs.str
+```
+
+because `str` is private.
+
+With:
+
+```cpp
+friend bool operator==(const Mystring &lhs,
+                       const Mystring &rhs);
+```
+
+it can access them.
+
+Therefore:
+
+```text
+private data
+      ↓
+   friend
+      ↓
+global operator
+```
+
+---
+
+# 14. Important Mental Model
+
+The most useful way to think about this topic:
+
+```cpp
+a + b
+```
+
+does **not** literally mean that `+` is special magic.
+
+C++ searches for an appropriate overloaded operator.
+
+With a global operator:
+
+```cpp
+a + b
+```
+
+can conceptually become:
+
+```cpp
+operator+(a, b);
+```
+
+With a member operator:
+
+```cpp
+a + b
+```
+
+can conceptually become:
+
+```cpp
+a.operator+(b);
+```
+
+This distinction becomes particularly important when the left-hand operand is a different type.
+
+---
+
+# 15. Current `Mystring` Design
+
+The project now demonstrates both styles:
+
+### Member operators
+
+```cpp
+Mystring operator-() const;
+
+Mystring operator+(const Mystring &rhs) const;
+
+bool operator==(const Mystring &rhs) const;
+```
+
+### Global operators
+
+```cpp
+friend bool operator==(const Mystring &lhs,
+                       const Mystring &rhs);
+
+friend Mystring operator-(const Mystring &obj);
+
+friend Mystring operator+(const Mystring &lhs,
+                          const Mystring &rhs);
+```
+
+The global version allows expressions such as:
+
+```cpp
+"Larry" + moe;
+```
+
+which is the main practical motivation demonstrated in this exercise.
+
+---
+
+# Key Takeaways
+
+> [!summary]
+>
+> * A **non-member/global operator** is defined outside the class.
+> * It does not have a `this` pointer.
+> * All operands are passed explicitly as parameters.
+> * `friend` allows the global operator to access private/protected members.
+> * `friend` does **not** turn the function into a member function.
+> * Global operators are particularly useful when the left-hand operand is another type.
+> * `lhs` means left-hand side.
+> * `rhs` means right-hand side.
+> * Operator chaining works by repeatedly applying the overloaded operator to the intermediate result.
+> * The same operator can conceptually be written as either a member or non-member function depending on the design.
+
+## Mental Checklist
+
+When writing a global operator, ask:
+
+1. **Should this operator be a non-member?**
+2. **Does it need access to private data?**
+3. If yes → should it be declared `friend`?
+4. **How many operands does the operator have?**
+5. What should the operator return?
+6. Should either operand be modified?
+7. Can the operator support useful conversions on the left-hand side?
+
+---
+
+## Next Step
+
+After understanding:
+
+```text
+Member Operator Overloading
+        ↓
+Global / Non-Member Operator Overloading
+        ↓
+friend
+```
+
+the next useful step is to become comfortable with the design differences between **member and non-member operators**, rather than simply memorizing syntax.
