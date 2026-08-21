@@ -1,22 +1,71 @@
-#ifndef _MYSTRING_H_
-#define _MYSTRING_H_
+#ifndef MYSTRING_H
+#define MYSTRING_H
+
+#pragma once
 
 class Mystring
 {
+
+//================================================
+// Attributes // Data Members
+//================================================
+
 private:
-    char *str;      // pointer to a char[] that holds a C-style string
+
+    char* str;
+
+//================================================
+// Member Functions
+//================================================
+
 public:
-    Mystring();                                                         // No-args constructor
-    Mystring(const char *s);                                     // Overloaded constructor
-    Mystring(const Mystring &source);                    // Copy constructor
-    ~Mystring();                                                      // Destructor
-    
-    Mystring &operator=(const Mystring &rhs);       // Copy assignment
-    
+
+    //--------------------------------------------
+    // Constructors
+    //--------------------------------------------
+
+    // *** Default Construtor ***
+    Mystring();
+
+    // *** Overloading Constructor ***
+    Mystring(const char* s);
+
+    // *** Copy Constructor ***
+    Mystring(const Mystring &source);
+
+    // *** Destructor ***
+    ~Mystring();
+
+    //--------------------------------------------
+    // Assignments
+    //--------------------------------------------
+
+        // +++++++++++++++++++++++++++++++++++++++
+        // +++++++++++++++++++++++++++++++++++++++
+        // Copy Assignemt (Start)
+        // +++++++++++++++++++++++++++++++++++++++
+        // +++++++++++++++++++++++++++++++++++++++
+
+        Mystring &operator=(const Mystring &rhs);
+
+        // +++++++++++++++++++++++++++++++++++++++
+        // +++++++++++++++++++++++++++++++++++++++
+        // Copy Assignemt (End)
+        // +++++++++++++++++++++++++++++++++++++++
+        // +++++++++++++++++++++++++++++++++++++++
+
+
+    //--------------------------------------------
+    // Function Declerations
+    //--------------------------------------------
+
+    // *** getters ***
+    int get_length() const;
+    const char* get_string() const;
+
+    // *** display function (Fancy getter) ***
     void display() const;
 
-    int get_length() const;                                       // getters
-    const char *get_str() const;
 };
 
-#endif // _MYSTRING_H_
+#endif

@@ -8,13 +8,13 @@ using namespace std;
 
 int main() {
     
-    Mystring a{"Hello"};                // Overloaded constructor
+    Mystring a{"Hello"};               // Overloaded constructor
     a = Mystring{"Hola"};              // Overloaded constructor then move assignment
-    a = "Bonjour";                         // Overloaded constructor then move assignment
+    a = "Bonjour";                     // Overloaded constructor then move assignment
     
  
-    Mystring empty;                      // no-args constructor
-    Mystring larry("Larry");             // overloaded constructor
+    Mystring empty;                     // no-args constructor
+    Mystring larry("Larry");            // overloaded constructor
     Mystring stooge {larry};            // copy constructor 
     Mystring stooges;                   // no-args constructor
     
