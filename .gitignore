@@ -34,6 +34,8 @@ __pycache__/
 # ROOT
 # -------------------------
 *.root
+03_Programming/root/
+*.tar.gz
 
 # -------------------------
 # Build Files
