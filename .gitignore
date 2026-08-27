@@ -34,7 +34,7 @@ __pycache__/
 # ROOT
 # -------------------------
 *.root
-03_Programming/root/
+03_Programming/ROOT/root/
 *.tar.gz
 
 # -------------------------
