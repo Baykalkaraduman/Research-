@@ -1,0 +1,21 @@
+# Modern C++: Notes, Implementations & Scientific Extensions
+
+This repository contains my personal implementations, technical study notes, and exercises developed while following the Udemy course **"Beginning C++ Programming - From Beginner to Beyond"** by **Dr. Frank Mitropoulos**.
+
+---
+
+## 📌 Repository Scope & Key Additions
+
+While the core curriculum follows the structured roadmap of the course, this repository extends the original material with:
+
+- **In-Depth Annotations:** Comprehensive inline documentation and theoretical breakdowns embedded directly within the code.
+- **Scientific & Computational Extensions:** Additional numerical and physics-oriented problem sets implementing Modern C++ standards ($C++14$, $C++17$, and select $C++20$ features).
+- **Custom Challenges:** Supplementary edge-case implementations, custom memory-management practices, and refactored OOP design patterns.
+
+---
+
+## 🔗 Attribution & Original Course
+
+- **Instructor:** Dr. Frank Mitropoulos
+- **Course:** [Beginning C++ Programming - From Beginner to Beyond (Udemy)](https://www.udemy.com/course/beginning-c-plus-plus-programming/)
+- **Purpose:** Academic self-study, reference archive, and code repository for computational workflows.
