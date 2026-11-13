@@ -63,3 +63,14 @@ temp/
 *.out
 *.toc
 *.synctex.gz
+
+# -------------------------
+# Virtual Environment & Custom Exclusions
+# -------------------------
+.venv/
+03_Programming/Programming-Python/
+03_Programming/Programming-Python.backup/
+
+# Chat_Analysis icindeki .py dosyasi haric her seyi ignore et
+03_Programming/00_Major_Homeworks_and_Projects/Chat_Analysis/*
+!03_Programming/00_Major_Homeworks_and_Projects/Chat_Analysis/*.py
