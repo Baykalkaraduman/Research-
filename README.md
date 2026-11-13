@@ -8,16 +8,14 @@ Become an Experimental High Energy Physicist specializing in Dark Matter.
 
 ## Current Focus
 
-- Classical Mechanics
-- Modern C++
+- Advanced Electrodynamics
+- Geant4
+- ROOT
 - Scientific Python
 
 ---
 
 ## Current Books
-
-- Taylor - Classical Mechanics
-- Stroustrup - Programming: Principles and Practice Using C++
 
 ---
 
